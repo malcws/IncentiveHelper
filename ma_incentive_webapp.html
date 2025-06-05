@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Massachusetts Energy Incentive Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            height: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            height: 100%;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .question-note {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            accent-color: #3498db;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            accent-color: #3498db;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .radio-group, .checkbox-group {
+            display: grid;
+            gap: 10px;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover, .checkbox-option:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+
+        .radio-option.selected, .checkbox-option.selected {
+            border-color: #3498db;
+            background-color: #ebf3fd;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Massachusetts Energy Incentive Guide</h1>
+            <p>Find the best energy efficiency rebates and incentives for your home or business</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="content">
+            <!-- Question 1: Location -->
+            <div class="question-container active" id="question1">
+                <div class="question">
+                    <h2>Property Location</h2>
+                    <div class="form-group">
+                        <label for="zipCode">What is your property's zip code?</label>
+                        <input type="text" id="zipCode" placeholder="Enter zip code" maxlength="5">
+                        <div class="error-message" id="zipError">Please enter a valid Massachusetts zip code</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2: Customer Type -->
+            <div class="question-container" id="question2">
+                <div class="question">
+                    <h2>Customer Type</h2>
+                    <div class="question-note">This determines which programs are available to you</div>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="residential">
+                                <input type="radio" name="customerType" value="residential" id="residential">
+                                <label for="residential">Homeowner/Resident (1-4 unit property)</label>
+                            </div>
+                            <div class="radio-option" data-value="business">
+                                <input type="radio" name="customerType" value="business" id="business">
+                                <label for="business">Business owner/Commercial property</label>
+                            </div>
+                            <div class="radio-option" data-value="landlord">
+                                <input type="radio" name="customerType" value="landlord" id="landlord">
+                                <label for="landlord">Property manager/Landlord</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3: Property Details (Residential) -->
+            <div class="question-container" id="question3">
+                <div class="question">
+                    <h2>Property Details</h2>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="single-family">
+                                <input type="radio" name="propertyType" value="single-family" id="singleFamily">
+                                <label for="singleFamily">Single-family home</label>
+                            </div>
+                            <div class="radio-option" data-value="condo">
+                                <input type="radio" name="propertyType" value="condo" id="condo">
+                                <label for="condo">Condo/Townhouse (1-4 units)</label>
+                            </div>
+                            <div class="radio-option" data-value="apartment">
+                                <input type="radio" name="propertyType" value="apartment" id="apartment">
+                                <label for="apartment">Apartment (tenant)</label>
+                            </div>
+                            <div class="radio-option" data-value="multi-family">
+                                <input type="radio" name="propertyType" value="multi-family" id="multiFamily">
+                                <label for="multiFamily">Multi-family (5+ units)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4: Business Size (Commercial) -->
+            <div class="question-container" id="question4">
+                <div class="question">
+                    <h2>Business Size</h2>
+                    <div class="question-note">Approximate conversions: &lt;300 kW ≈ &lt;$3,000/month, 300kW-1,500kW ≈ $3,000-$15,000/month</div>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="small">
+                                <input type="radio" name="businessSize" value="small" id="smallBusiness">
+                                <label for="smallBusiness">Under $3,000/month (Small business programs available)</label>
+                            </div>
+                            <div class="radio-option" data-value="medium">
+                                <input type="radio" name="businessSize" value="medium" id="mediumBusiness">
+                                <label for="mediumBusiness">$3,000 - $15,000/month (Medium commercial)</label>
+                            </div>
+                            <div class="radio-option" data-value="large">
+                                <input type="radio" name="businessSize" value="large" id="largeBusiness">
+                                <label for="largeBusiness">Over $15,000/month (Large commercial/industrial)</label>
+                            </div>
+                            <div class="radio-option" data-value="unknown">
+                                <input type="radio" name="businessSize" value="unknown" id="unknownBusiness">
+                                <label for="unknownBusiness">Don't know (we can help you determine this)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 5: Household Size -->
+            <div class="question-container" id="question5">
+                <div class="question">
+                    <h2>Household Information</h2>
+                    <div class="question-note">This information helps determine enhanced rebate eligibility</div>
+                    <div class="form-group">
+                        <label for="householdSize">How many people live in your household?</label>
+                        <select id="householdSize">
+                            <option value="">Select household size</option>
+                            <option value="1">1 person</option>
+                            <option value="2">2 people</option>
+                            <option value="3">3 people</option>
+                            <option value="4">4 people</option>
+                            <option value="5">5 people</option>
+                            <option value="6">6 people</option>
+                            <option value="7">7 people</option>
+                            <option value="8">8+ people</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="householdIncome">What is your total annual household income before taxes?</label>
+                        <select id="householdIncome">
+                            <option value="">Select income range</option>
+                            <option value="under30k">Under $30,000</option>
+                            <option value="30k-50k">$30,000 - $50,000</option>
+                            <option value="50k-70k">$50,000 - $70,000</option>
+                            <option value="70k-90k">$70,000 - $90,000</option>
+                            <option value="90k-110k">$90,000 - $110,000</option>
+                            <option value="110k-130k">$110,000 - $130,000</option>
+                            <option value="over130k">Over $130,000</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 6: Current Heating -->
+            <div class="question-container" id="question6">
+                <div class="question">
+                    <h2>Current Heating System</h2>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="gas">
+                                <input type="radio" name="heatingSystem" value="gas" id="gasHeating">
+                                <label for="gasHeating">Natural gas furnace/boiler</label>
+                            </div>
+                            <div class="radio-option" data-value="oil">
+                                <input type="radio" name="heatingSystem" value="oil" id="oilHeating">
+                                <label for="oilHeating">Oil furnace/boiler</label>
+                            </div>
+                            <div class="radio-option" data-value="propane">
+                                <input type="radio" name="heatingSystem" value="propane" id="propaneHeating">
+                                <label for="propaneHeating">Propane heating</label>
+                            </div>
+                            <div class="radio-option" data-value="electric-hp">
+                                <input type="radio" name="heatingSystem" value="electric-hp" id="electricHP">
+                                <label for="electricHP">Electric heat pumps</label>
+                            </div>
+                            <div class="radio-option" data-value="electric-resistance">
+                                <input type="radio" name="heatingSystem" value="electric-resistance" id="electricResistance">
+                                <label for="electricResistance">Electric baseboard/resistance</label>
+                            </div>
+                            <div class="radio-option" data-value="wood">
+                                <input type="radio" name="heatingSystem" value="wood" id="woodHeating">
+                                <label for="woodHeating">Wood/pellet stove</label>
+                            </div>
+                            <div class="radio-option" data-value="other">
+                                <input type="radio" name="heatingSystem" value="other" id="otherHeating">
+                                <label for="otherHeating">Other/Don't know</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 7: Current Cooling -->
+            <div class="question-container" id="question7">
+                <div class="question">
+                    <h2>Current Cooling System</h2>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="central-ac">
+                                <input type="radio" name="coolingSystem" value="central-ac" id="centralAC">
+                                <label for="centralAC">Central air conditioning (whole house system with ducts)</label>
+                            </div>
+                            <div class="radio-option" data-value="window-ac">
+                                <input type="radio" name="coolingSystem" value="window-ac" id="windowAC">
+                                <label for="windowAC">Window or wall AC units</label>
+                            </div>
+                            <div class="radio-option" data-value="mini-splits">
+                                <input type="radio" name="coolingSystem" value="mini-splits" id="miniSplits">
+                                <label for="miniSplits">Individual room units mounted on walls (also called ductless mini-splits)</label>
+                            </div>
+                            <div class="radio-option" data-value="no-cooling">
+                                <input type="radio" name="coolingSystem" value="no-cooling" id="noCooling">
+                                <label for="noCooling">No cooling system</label>
+                            </div>
+                            <div class="radio-option" data-value="heat-pumps">
+                                <input type="radio" name="coolingSystem" value="heat-pumps" id="heatPumps">
+                                <label for="heatPumps">Heat pumps (provide both heating & cooling)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 8: Home Age -->
+            <div class="question-container" id="question8">
+                <div class="question">
+                    <h2>Home Information</h2>
+                    <div class="form-group">
+                        <label for="homeAge">When was your home built?</label>
+                        <select id="homeAge">
+                            <option value="">Select decade</option>
+                            <option value="2020s">2020s</option>
+                            <option value="2010s">2010s</option>
+                            <option value="2000s">2000s</option>
+                            <option value="1990s">1990s</option>
+                            <option value="1980s">1980s</option>
+                            <option value="1970s">1970s</option>
+                            <option value="1960s">1960s</option>
+                            <option value="1950s">1950s</option>
+                            <option value="1940s">1940s or earlier</option>
+                            <option value="unknown">Don't know</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Have you had any energy efficiency work done in the past 2 years?</label>
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="assessment">
+                                <input type="radio" name="previousWork" value="assessment" id="previousAssessment">
+                                <label for="previousAssessment">Yes - Home Energy Assessment completed</label>
+                            </div>
+                            <div class="radio-option" data-value="weatherization">
+                                <input type="radio" name="previousWork" value="weatherization" id="previousWeatherization">
+                                <label for="previousWeatherization">Yes - Insulation/weatherization work</label>
+                            </div>
+                            <div class="radio-option" data-value="equipment">
+                                <input type="radio" name="previousWork" value="equipment" id="previousEquipment">
+                                <label for="previousEquipment">Yes - New heating/cooling equipment</label>
+                            </div>
+                            <div class="radio-option" data-value="none">
+                                <input type="radio" name="previousWork" value="none" id="noPreviousWork">
+                                <label for="noPreviousWork">No previous efficiency work</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 9: Primary Interest -->
+            <div class="question-container" id="question9">
+                <div class="question">
+                    <h2>Project Interests</h2>
+                    <div class="question-note">Select all that apply</div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <div class="checkbox-option" data-value="heat-pumps">
+                                <input type="checkbox" name="interests" value="heat-pumps" id="interestHeatPumps">
+                                <label for="interestHeatPumps">Heat pump installation (heating & cooling)</label>
+                            </div>
+                            <div class="checkbox-option" data-value="insulation">
+                                <input type="checkbox" name="interests" value="insulation" id="interestInsulation">
+                                <label for="interestInsulation">Insulation improvements</label>
+                            </div>
+                            <div class="checkbox-option" data-value="weatherization">
+                                <input type="checkbox" name="interests" value="weatherization" id="interestWeatherization">
+                                <label for="interestWeatherization">Air sealing/weatherization</label>
+                            </div>
+                            <div class="checkbox-option" data-value="lighting">
+                                <input type="checkbox" name="interests" value="lighting" id="interestLighting">
+                                <label for="interestLighting">Lighting upgrades</label>
+                            </div>
+                            <div class="checkbox-option" data-value="water-heating">
+                                <input type="checkbox" name="interests" value="water-heating" id="interestWaterHeating">
+                                <label for="interestWaterHeating">Water heating upgrades</label>
+                            </div>
+                            <div class="checkbox-option" data-value="comprehensive">
+                                <input type="checkbox" name="interests" value="comprehensive" id="interestComprehensive">
+                                <label for="interestComprehensive">Comprehensive whole-home approach</label>
+                            </div>
+                            <div class="checkbox-option" data-value="not-sure">
+                                <input type="checkbox" name="interests" value="not-sure" id="interestNotSure">
+                                <label for="interestNotSure">Not sure - want recommendations</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 14: Commercial Equipment Focus -->
+            <div class="question-container" id="question14">
+                <div class="question">
+                    <h2>Commercial Equipment Focus</h2>
+                    <div class="question-note">Select all that apply</div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <div class="checkbox-option" data-value="hvac">
+                                <input type="checkbox" name="commercialEquipment" value="hvac" id="commercialHVAC">
+                                <label for="commercialHVAC">HVAC/Heat pumps</label>
+                            </div>
+                            <div class="checkbox-option" data-value="lighting">
+                                <input type="checkbox" name="commercialEquipment" value="lighting" id="commercialLighting">
+                                <label for="commercialLighting">LED lighting and controls</label>
+                            </div>
+                            <div class="checkbox-option" data-value="refrigeration">
+                                <input type="checkbox" name="commercialEquipment" value="refrigeration" id="commercialRefrigeration">
+                                <label for="commercialRefrigeration">Refrigeration equipment</label>
+                            </div>
+                            <div class="checkbox-option" data-value="motors">
+                                <input type="checkbox" name="commercialEquipment" value="motors" id="commercialMotors">
+                                <label for="commercialMotors">Motors and drives</label>
+                            </div>
+                            <div class="checkbox-option" data-value="foodservice">
+                                <input type="checkbox" name="commercialEquipment" value="foodservice" id="commercialFoodservice">
+                                <label for="commercialFoodservice">Food service equipment</label>
+                            </div>
+                            <div class="checkbox-option" data-value="water-heating">
+                                <input type="checkbox" name="commercialEquipment" value="water-heating" id="commercialWaterHeating">
+                                <label for="commercialWaterHeating">Water heating</label>
+                            </div>
+                            <div class="checkbox-option" data-value="envelope">
+                                <input type="checkbox" name="commercialEquipment" value="envelope" id="commercialEnvelope">
+                                <label for="commercialEnvelope">Building envelope improvements</label>
+                            </div>
+                            <div class="checkbox-option" data-value="custom">
+                                <input type="checkbox" name="commercialEquipment" value="custom" id="commercialCustom">
+                                <label for="commercialCustom">Custom/comprehensive project</label>
+                            </div>
+                            <div class="checkbox-option" data-value="guidance">
+                                <input type="checkbox" name="commercialEquipment" value="guidance" id="commercialGuidance">
+                                <label for="commercialGuidance">Not sure -- need guidance</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="question-container" id="summary">
+                <div class="question">
+                    <h2>Summary</h2>
+                    <div class="summary" id="summaryContent">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 10; // Will be dynamic based on user path
+        let userAnswers = {};
+        let questionFlow = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateProgress();
+        });
+
+        function setupEventListeners() {
+            // Radio button selections
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Update visual selection
+                    this.parentElement.querySelectorAll('.radio-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // Store answer
+                    userAnswers[radio.name] = radio.value;
+                });
+            });
+
+            // Checkbox selections
+            document.querySelectorAll('.checkbox-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // Update visual selection
+                    if (checkbox.checked) {
+                        this.classList.add('selected');
+                    } else {
+                        this.classList.remove('selected');
+                    }
+                    
+                    // Store answers for checkboxes
+                    const name = checkbox.name;
+                    if (!userAnswers[name]) userAnswers[name] = [];
+                    
+                    if (checkbox.checked) {
+                        if (!userAnswers[name].includes(checkbox.value)) {
+                            userAnswers[name].push(checkbox.value);
+                        }
+                    } else {
+                        userAnswers[name] = userAnswers[name].filter(val => val !== checkbox.value);
+                    }
+                });
+            });
+
+            // Text and select inputs
+            document.querySelectorAll('input[type="text"], input[type="number"], select').forEach(input => {
+                input.addEventListener('change', function() {
+                    userAnswers[this.id] = this.value;
+                });
+            });
+
+            // Zip code validation
+            document.getElementById('zipCode').addEventListener('input', function() {
+                validateZipCode(this.value);
+            });
+        }
+
+        function validateZipCode(zipCode) {
+            const massZipCodes = /^0[1-7]\d{3}$/; // Massachusetts zip codes start with 01-07
+            const errorElement = document.getElementById('zipError');
+            
+            if (zipCode.length === 5 && massZipCodes.test(zipCode)) {
+                errorElement.style.display = 'none';
+                return true;
+            } else if (zipCode.length === 5) {
+                errorElement.style.display = 'block';
+                return false;
+            }
+            return false;
+        }
+
+        function determineQuestionFlow() {
+            const customerType = userAnswers.customerType;
+            
+            if (customerType === 'residential' || customerType === 'landlord') {
+                return [1, 2, 3, 5, 6, 7, 8, 9, 'summary'];
+            } else if (customerType === 'business') {
+                return [1, 2, 4, 6, 14, 'summary'];
+            }
+            
+            return [1, 2, 'summary']; // Default flow
+        }
+
+        function nextQuestion() {
+            if (!validateCurrentQuestion()) {
+                return;
+            }
+
+            if (currentQuestion === 2) {
+                // Determine question flow based on customer type
+                questionFlow = determineQuestionFlow();
+            }
+
+            const currentIndex = questionFlow.indexOf(currentQuestion);
+            if (currentIndex < questionFlow.length - 1) {
+                hideQuestion(currentQuestion);
+                currentQuestion = questionFlow[currentIndex + 1];
+                
+                if (currentQuestion === 'summary') {
+                    generateSummary();
+                }
+                
+                showQuestion(currentQuestion);
+                updateProgress();
+                updateButtons();
+            }
+        }
+
+        function previousQuestion() {
+            const currentIndex = questionFlow.indexOf(currentQuestion);
+            if (
